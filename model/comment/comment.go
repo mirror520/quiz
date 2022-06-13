@@ -1,6 +1,13 @@
 package comment
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrCommentUUIDNotFound = errors.New("comment uuid not found")
+)
 
 type Comment struct {
 	UUID     string    `json:"uuid"`
