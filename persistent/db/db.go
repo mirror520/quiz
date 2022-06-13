@@ -50,7 +50,7 @@ func (repo *commentRepository) FindCommentByUUID(uuid string) (*comment.Comment,
 	tx := repo.db.Take(&c, "uuid = ?", uuid)
 	if err := tx.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, comment.ErrCommentUUIDNotFound
+			return nil, comment.ErrCommentNotFound
 		}
 
 		return nil, err
@@ -63,7 +63,7 @@ func (repo *commentRepository) Remove(uuid string) error {
 	tx := repo.db.Delete(&comment.Comment{}, "uuid = ?", uuid)
 	if err := tx.Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return comment.ErrCommentUUIDNotFound
+			return comment.ErrCommentNotFound
 		}
 
 		return err

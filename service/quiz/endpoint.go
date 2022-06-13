@@ -10,7 +10,11 @@ import (
 )
 
 var (
-	ErrInvalidUUID = errors.New("invalid uuid")
+	ErrCreateCommentFail   = errors.New("create comment fail")
+	ErrCommentUUIDNotFound = errors.New("comment uuid not found")
+	ErrModifyFail          = errors.New("modify fail")
+	ErrDeleteFail          = errors.New("delete fail")
+	ErrInvalidUUID         = errors.New("invalid uuid")
 )
 
 type ContextKey int

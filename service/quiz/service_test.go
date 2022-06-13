@@ -102,7 +102,7 @@ func (suite *quizServiceTestSuite) TestRemoveCommentByUUID() {
 	suite.NoError(err)
 
 	_, err = suite.svc.GetCommentByUUID(suite.testData3.UUID)
-	suite.ErrorIs(err, comment.ErrCommentUUIDNotFound, "確定找不到該評論")
+	suite.ErrorIs(err, comment.ErrCommentNotFound, "確定找不到該評論")
 }
 
 func (suite *quizServiceTestSuite) TearDownSuite() {

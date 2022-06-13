@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrCommentUUIDNotFound = errors.New("comment uuid not found")
+	ErrCommentNotFound = errors.New("comment not found")
 )
 
 type Comment struct {

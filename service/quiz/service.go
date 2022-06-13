@@ -7,6 +7,7 @@ import (
 )
 
 // Service 專注於業務邏輯，並直接操作領域模型
+// 可單純對 Service 業務邏輯做單元測試
 type Service interface {
 	CreateComment(*comment.Comment) (*comment.Comment, error)               // Create a new comment.
 	GetCommentByUUID(string) (*comment.Comment, error)                      // Get comment by UUID.

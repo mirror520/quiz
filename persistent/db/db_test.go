@@ -67,7 +67,7 @@ func (suite *commentRepositoryTestSuite) TestRemove() {
 	suite.NoError(err)
 
 	_, err = suite.repo.FindCommentByUUID(suite.testData2.UUID)
-	suite.ErrorIs(err, comment.ErrCommentUUIDNotFound)
+	suite.ErrorIs(err, comment.ErrCommentNotFound)
 }
 
 func (suite *commentRepositoryTestSuite) TearDownSuite() {
