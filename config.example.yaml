@@ -1,5 +1,3 @@
-baseurl: api.quiz.linyc.idv
-
 db:
   host: mysql
   port: 3306
@@ -9,7 +7,6 @@ db:
 
 ---
 # environment variables
-# QUIZ_BASEURL
 # QUIZ_DB_HOST
 # QUIZ_DB_PORT
 # QUIZ_DB_USERNAME

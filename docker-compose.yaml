@@ -1,39 +1,36 @@
 version: "3"
 
-# traefik supported
-networks:
-  default:
-    external:
-      name: quiz
+volumes:
+  quiz-db:
 
 services:
-  api:
+  quiz-api:
     build: .
-    image: docker.linyc.idv.tw/quiz:latest
+    image: ar0660/quiz:latest
+    ports:
+      - "0.0.0.0:8080:8080"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`api.quiz.linyc.idv.tw`)"
-      - "traefik.http.services.api.loadbalancer.server.port=8080"
     environment:
       - GIN_MODE=release
-      - QUIZ_BASEURL=https://api.quiz.linyc.idv.tw
-      - QUIZ_DB_HOST=mysql
+      - QUIZ_DB_HOST=quiz-db
       - QUIZ_DB_PORT=3306
-      - QUIZ_DB_USERNAME=quiz
+      - QUIZ_DB_USERNAME=root
       - QUIZ_DB_PASSWORD=password
       - QUIZ_DB_NAME=quiz
+    depends_on:
+      - quiz-db
     restart: always
-    container_name: api
+    container_name: quiz-api
 
-  mysql:
+  quiz-db:
     image: mysql:8.0.29
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./mysql/data:/var/lib/mysql
+      - quiz-db:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=quiz
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    container_name: mysql
+    container_name: quiz-db
