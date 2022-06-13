@@ -1,7 +1,6 @@
 package quiz
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -70,13 +69,13 @@ func (suite *commentTestSuite) TestCreateComment() {
 		Favorite: false,
 	}
 
-	comment, err := suite.svc.CreateComment(context.TODO(), comment)
+	comment, err := suite.svc.CreateComment(comment)
 	suite.NoError(err)
 	suite.Len(comment.UUID, 36, "UUID 長度應為 36 個字元")
 }
 
 func (suite *commentTestSuite) TestGetCommentByUUID() {
-	comment, err := suite.svc.GetCommentByUUID(context.TODO(), suite.testData1.UUID)
+	comment, err := suite.svc.GetCommentByUUID(suite.testData1.UUID)
 	suite.NoError(err)
 	suite.Equal(suite.testData1.UUID, comment.UUID, "UUID 應相同")
 }
@@ -91,17 +90,17 @@ func (suite *commentTestSuite) TestModifyCommentByUUID() {
 		Favorite: true, // modify
 	}
 
-	output, err := suite.svc.ModifyCommentByUUID(context.TODO(), input, input.UUID)
+	output, err := suite.svc.ModifyCommentByUUID(input, input.UUID)
 	suite.NoError(err)
 	suite.Equal(input.Favorite, output.Favorite, "修改後資料應與輸入資料相同")
 	suite.NotEqual(suite.testData2.Favorite, output.Favorite, "修改後資料應與修改前測試資料不同")
 }
 
 func (suite *commentTestSuite) TestRemoveCommentByUUID() {
-	err := suite.svc.RemoveCommentByUUID(context.TODO(), suite.testData3.UUID)
+	err := suite.svc.RemoveCommentByUUID(suite.testData3.UUID)
 	suite.NoError(err)
 
-	_, err = suite.svc.GetCommentByUUID(context.TODO(), suite.testData3.UUID)
+	_, err = suite.svc.GetCommentByUUID(suite.testData3.UUID)
 	suite.ErrorIs(err, comment.ErrCommentUUIDNotFound, "確定找不到該評論")
 }
 
