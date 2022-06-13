@@ -1,13 +1,23 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"os"
 
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/configor"
+
+	"github.com/mirror520/quiz/model"
 	"github.com/mirror520/quiz/persistent/db"
 	"github.com/mirror520/quiz/service/quiz"
 )
 
 func main() {
+	os.Setenv("CONFIGOR_ENV_PREFIX", "QUIZ")
+
+	// 找不到 config.yaml 會自動找 config.exmaple.yaml
+	// config.yaml 含機敏資料需隱藏
+	configor.Load(&model.Config, "config.yaml")
+
 	router := gin.Default()
 	quizV1 := router.Group("/quiz/v1")
 

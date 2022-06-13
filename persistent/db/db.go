@@ -2,10 +2,10 @@ package db
 
 import (
 	"errors"
+	"log"
 
 	"github.com/google/uuid"
-	"go.uber.org/zap"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	"github.com/mirror520/quiz/model/comment"
@@ -17,9 +17,10 @@ type commentRepository struct {
 
 // 以 DB 實作 Comment 領域模型之資料持續性
 func NewCommentRepository() comment.Repository {
-	db, err := gorm.Open(sqlite.Open("comment.db"), &gorm.Config{})
+	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		zap.L().Fatal(err.Error())
+		log.Fatal(err.Error())
 	}
 	db.AutoMigrate(&comment.Comment{})
 
