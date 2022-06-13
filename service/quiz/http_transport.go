@@ -51,7 +51,7 @@ func GetCommentByUUIDHandler(e endpoint.Endpoint) gin.HandlerFunc {
 	}
 }
 
-func ModifyCommentByUUID(e endpoint.Endpoint) gin.HandlerFunc {
+func ModifyCommentByUUIDHandler(e endpoint.Endpoint) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		uuid := ctx.Param("uuid")
 		ctxWithUUID := context.WithValue(ctx, UUID, uuid)
