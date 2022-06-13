@@ -32,7 +32,7 @@ type Comment struct {
 
 此外，通常第一個參數會用來傳遞 `context.Context` 上下文，因為此作業較單純，所以並沒有實現。
 
-[service/quiz](./service/quiz/service.go)
+[quiz/service](./service/quiz/service.go)
 
 ```go
 type Service interface {
@@ -96,6 +96,8 @@ func main() {
 
 建議學習 GoKit 精神，如 Endpoint 內 req / resp 為已知結構，已可自訂 Endpoint，減少需額外的型態斷言。
 
+[quiz/endpoint](./service/quiz/endpoint.go)
+
 ```go
 func CreateCommentEndpoint(svc Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
@@ -110,6 +112,8 @@ func CreateCommentEndpoint(svc Service) endpoint.Endpoint {
 ### Transport
 
 `Transport` 可提供多種服務端點外部傳輸介面，如：HTTP API、gRPC、PubSub 介面等。其主要係經封包解 / 編碼作業後，即送往相同之端點 `Endpoint` 處理。
+
+[quiz/transport](./service/quiz/http_transport.go)
 
 ```go
 func CreateCommentHandler(e endpoint.Endpoint) gin.HandlerFunc {
@@ -138,6 +142,8 @@ func CreateCommentHandler(e endpoint.Endpoint) gin.HandlerFunc {
 
 即 `Transport ( Endpoint ( Middleware...( Service ) ) )`
 
+[main](./main.go)
+
 ```go
 func main() {
     svc := quiz.NewService()
@@ -147,3 +153,92 @@ func main() {
     handler := quiz.CreateCommentHandler(endpoint) // 可供外部調用
 }
 ```
+
+## Persistent
+
+### Domain Repository
+
+宣告領域模型需提供資料持續化的方法
+
+[model/comment](./model/comment/comment.go)
+
+```go
+type Repository interface {
+	Store(*Comment) error
+	FindCommentByUUID(string) (*Comment, error)
+	Remove(string) error
+}
+```
+
+### 提供領域模型資料持續化
+
+可以使用 `DB`、`INMEM`、`Cache`、`File` 等各種方式實現模型持續化。
+
+其將實作 comment.Repository 介面，故可注入至所需服務中，而服務不需理解其持續化是使用何種方式實現。
+
+[persistent/db](./persistent/db/comment.go)
+
+```go
+type commentRepository struct {
+	db *gorm.DB
+}
+
+func NewCommentRepository() comment.Repository {
+    // 建立 DB 連線實例
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	repo := new(commentRepository)
+	repo.db = db
+	return repo
+}
+
+func (repo *commentRepository) Store(c *comment.Comment) error {
+	var tx *gorm.DB
+	if c.UUID == "" {
+		id, err := uuid.NewRandom()
+		if err != nil {
+			return err
+		}
+		c.UUID = id.String()
+
+		tx = repo.db.Create(c)
+	} else {
+		tx = repo.db.Save(c)
+	}
+
+	return tx.Error
+}
+
+(略)
+```
+
+`注入服務`
+
+[main](./main.go)
+
+```go
+func main() {
+    // 注入 DB 提供的 comment.Repository 持續化至服務
+    {
+	    comments := db.NewCommentRepository()
+	    svc := quiz.NewService(comments)
+    }
+
+    // 注入 INMEM 提供的 comment.Repository 持續化至服務
+    {
+	    comments := inmem.NewCommentRepository()
+	    svc := quiz.NewService(comments)
+    }
+}
+```
+
+## 測試案例
+
+- 針對 `Service` 業務邏輯的測試
+[quiz/service_test](./service/quiz/service_test.go)
+
+- 針對 DB 模型資料持續化的測試
+[persistent/db](./persistent/db/comment_test.go)
