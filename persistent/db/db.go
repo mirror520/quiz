@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
@@ -47,6 +49,10 @@ func (repo *commentRepository) FindCommentByUUID(uuid string) (*comment.Comment,
 	var c *comment.Comment
 	tx := repo.db.Take(&c, "uuid = ?", uuid)
 	if err := tx.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, comment.ErrCommentUUIDNotFound
+		}
+
 		return nil, err
 	}
 
@@ -55,5 +61,13 @@ func (repo *commentRepository) FindCommentByUUID(uuid string) (*comment.Comment,
 
 func (repo *commentRepository) Remove(uuid string) error {
 	tx := repo.db.Delete(&comment.Comment{}, "uuid = ?", uuid)
-	return tx.Error
+	if err := tx.Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return comment.ErrCommentUUIDNotFound
+		}
+
+		return err
+	}
+
+	return nil
 }

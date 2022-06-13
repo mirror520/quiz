@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
 
 	"github.com/mirror520/quiz/model/comment"
 )
@@ -68,7 +67,7 @@ func (suite *commentRepositoryTestSuite) TestRemove() {
 	suite.NoError(err)
 
 	_, err = suite.repo.FindCommentByUUID(suite.testData2.UUID)
-	suite.ErrorIs(err, gorm.ErrRecordNotFound)
+	suite.ErrorIs(err, comment.ErrCommentUUIDNotFound)
 }
 
 func (suite *commentRepositoryTestSuite) TearDownSuite() {

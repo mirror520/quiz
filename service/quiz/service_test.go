@@ -28,7 +28,7 @@ func (suite *commentTestSuite) SetupSuite() {
 
 func (suite *commentTestSuite) SetupTest() {
 	// 測試資料應分開，每個單元測試是獨立的，不得期望測試案例執行順序
-	testData1 := &comment.Comment{
+	suite.testData1 = &comment.Comment{
 		UUID:     "",
 		ParentID: "a1205dab-824a-4e3a-bcd2-ed6102e60ae9",
 		Comment:  "根據中央氣象局地震測報中心地震報告，這起規模...",
@@ -36,9 +36,9 @@ func (suite *commentTestSuite) SetupTest() {
 		Update:   time.Date(2022, 6, 1, 1, 12, 33, 0, time.Local),
 		Favorite: false,
 	}
-	suite.repo.Store(testData1)
+	suite.repo.Store(suite.testData1)
 
-	testData2 := &comment.Comment{
+	suite.testData2 = &comment.Comment{
 		UUID:     "3fa85f64-5717-4562-b3fc-2c963f66afa6",
 		ParentID: "a1205dab-824a-4e3a-bcd2-ed6102e60ae9",
 		Comment:  "根據中央氣象局地震測報中心地震報告，這起規模...",
@@ -46,9 +46,9 @@ func (suite *commentTestSuite) SetupTest() {
 		Update:   time.Date(2022, 6, 1, 1, 12, 33, 0, time.Local),
 		Favorite: false,
 	}
-	suite.repo.Store(testData2)
+	suite.repo.Store(suite.testData2)
 
-	testData3 := &comment.Comment{
+	suite.testData3 = &comment.Comment{
 		UUID:     "",
 		ParentID: "a1205dab-824a-4e3a-bcd2-ed6102e60ae9",
 		Comment:  "根據中央氣象局地震測報中心地震報告，這起規模...",
@@ -56,7 +56,7 @@ func (suite *commentTestSuite) SetupTest() {
 		Update:   time.Date(2022, 6, 1, 1, 12, 33, 0, time.Local),
 		Favorite: false,
 	}
-	suite.repo.Store(testData3)
+	suite.repo.Store(suite.testData3)
 }
 
 func (suite *commentTestSuite) TestCreateComment() {
@@ -77,7 +77,7 @@ func (suite *commentTestSuite) TestCreateComment() {
 func (suite *commentTestSuite) TestGetCommentByUUID() {
 	comment, err := suite.svc.GetCommentByUUID(suite.testData1.UUID)
 	suite.NoError(err)
-	suite.Equal(suite.testData1.UUID, comment.UUID, "UUID 應相同")
+	suite.Equal(suite.testData1.UUID, comment.UUID, "UUID 應該相同")
 }
 
 func (suite *commentTestSuite) TestModifyCommentByUUID() {
