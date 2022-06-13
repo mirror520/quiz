@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/configor"
 
@@ -18,13 +19,14 @@ func main() {
 	// config.yaml 含機敏資料需隱藏
 	configor.Load(&model.Config, "config.yaml")
 
-	router := gin.Default()
-	quizV1 := router.Group("/quiz/v1")
-
 	// 注入 comment.Repository
 	comments := db.NewCommentRepository()
 	svc := quiz.NewService(comments)
 
+	router := gin.Default()
+	router.Use(cors.Default())
+
+	quizV1 := router.Group("/quiz/v1")
 	// POST /quiz/v1/comment
 	{
 		endpoint := quiz.CreateCommentEndpoint(svc)
