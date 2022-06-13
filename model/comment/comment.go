@@ -10,7 +10,7 @@ var (
 )
 
 type Comment struct {
-	UUID     string    `json:"uuid"`
+	UUID     string    `json:"uuid" gorm:"primaryKey"`
 	ParentID string    `json:"parentid"`
 	Comment  string    `json:"comment"`
 	Author   string    `json:"author"`
