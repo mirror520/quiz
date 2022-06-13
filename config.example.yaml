@@ -9,6 +9,7 @@ db:
 
 ---
 # environment variables
+# QUIZ_BASEURL
 # QUIZ_DB_HOST
 # QUIZ_DB_PORT
 # QUIZ_DB_USERNAME

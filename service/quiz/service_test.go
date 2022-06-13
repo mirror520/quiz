@@ -1,10 +1,11 @@
 package quiz
 
 import (
-	"os"
 	"testing"
 	"time"
 
+	"github.com/jinzhu/configor"
+	"github.com/mirror520/quiz/model"
 	"github.com/mirror520/quiz/model/comment"
 	"github.com/mirror520/quiz/persistent/db"
 
@@ -21,6 +22,9 @@ type quizServiceTestSuite struct {
 }
 
 func (suite *quizServiceTestSuite) SetupSuite() {
+	configor.Load(&model.Config, "../../config.yaml")
+	model.Config.DB.DBName = "quiz_test"
+
 	repo := db.NewCommentRepository()
 	suite.svc = NewService(repo)
 
@@ -106,7 +110,8 @@ func (suite *quizServiceTestSuite) TestRemoveCommentByUUID() {
 }
 
 func (suite *quizServiceTestSuite) TearDownSuite() {
-	os.Remove("comment.db")
+	db := suite.repo.(db.DBPersistent).DB()
+	db.Exec("DROP TABLE comments")
 }
 
 func TestQuizServiceTestSuite(t *testing.T) {

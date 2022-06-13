@@ -1,12 +1,13 @@
 package db
 
 import (
-	"os"
 	"testing"
 	"time"
 
+	"github.com/jinzhu/configor"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/mirror520/quiz/model"
 	"github.com/mirror520/quiz/model/comment"
 )
 
@@ -18,6 +19,9 @@ type commentRepositoryTestSuite struct {
 }
 
 func (suite *commentRepositoryTestSuite) SetupSuite() {
+	configor.Load(&model.Config, "../../config.yaml")
+	model.Config.DB.DBName = "quiz_test"
+
 	suite.repo = NewCommentRepository()
 
 	suite.testData1 = &comment.Comment{
@@ -71,7 +75,8 @@ func (suite *commentRepositoryTestSuite) TestRemove() {
 }
 
 func (suite *commentRepositoryTestSuite) TearDownSuite() {
-	os.Remove("comment.db")
+	db := suite.repo.(DBPersistent).DB()
+	db.Exec("DROP TABLE comments")
 }
 
 func TestCommentRepositoryTestSuite(t *testing.T) {
