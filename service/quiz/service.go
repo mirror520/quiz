@@ -6,7 +6,7 @@ import (
 	"github.com/mirror520/quiz/model/comment"
 )
 
-// Service 專注於業務邏輯，並操作領域模型
+// Service 專注於業務邏輯，並直接操作領域模型
 type Service interface {
 	CreateComment(*comment.Comment) (*comment.Comment, error)               // Create a new comment.
 	GetCommentByUUID(string) (*comment.Comment, error)                      // Get comment by UUID.
